@@ -282,8 +282,9 @@ export class MarketService {
    */
   async getProcessedOrderbook(conditionId: string): Promise<ProcessedOrderbook> {
     const market = await this.getClobMarket(conditionId);
-    const yesToken = market.tokens.find(t => t.outcome === 'Yes');
-    const noToken = market.tokens.find(t => t.outcome === 'No');
+    // Use index-based access instead of name-based (supports Yes/No, Up/Down, Team1/Team2, etc.)
+    const yesToken = market.tokens[0];  // primary outcome
+    const noToken = market.tokens[1];   // secondary outcome
 
     if (!yesToken || !noToken) {
       throw new PolymarketError(ErrorCode.INVALID_RESPONSE, 'Missing tokens in market');
@@ -487,9 +488,10 @@ export class MarketService {
     const market = await this.getMarket(conditionId);
     const trades = await this.dataApi.getTradesByMarket(conditionId, options?.limit || 1000);
 
-    // Separate trades by outcome
-    const yesTrades = trades.filter((t) => t.outcomeIndex === 0 || t.outcome === 'Yes');
-    const noTrades = trades.filter((t) => t.outcomeIndex === 1 || t.outcome === 'No');
+    // Separate trades by outcome using index (more reliable than name matching)
+    // outcomeIndex 0 = primary (Yes/Up/Team1), outcomeIndex 1 = secondary (No/Down/Team2)
+    const yesTrades = trades.filter((t) => t.outcomeIndex === 0);
+    const noTrades = trades.filter((t) => t.outcomeIndex === 1);
 
     const yesCandles = this.aggregateToKLines(yesTrades, interval);
     const noCandles = this.aggregateToKLines(noTrades, interval);
@@ -936,10 +938,12 @@ export class MarketService {
   }
 
   private fromGammaMarket(gamma: GammaMarket): UnifiedMarket {
-    // Create tokens from Gamma outcomes (binary market: Yes/No)
+    // Create tokens from Gamma outcomes - use actual outcome names from gamma data
+    // This supports Yes/No, Up/Down, Team1/Team2, Heads/Tails, etc.
+    const outcomes = gamma.outcomes || ['Yes', 'No'];
     const tokens: UnifiedMarketToken[] = [
-      { tokenId: '', outcome: 'Yes', price: gamma.outcomePrices[0] || 0.5 },
-      { tokenId: '', outcome: 'No', price: gamma.outcomePrices[1] || 0.5 },
+      { tokenId: '', outcome: outcomes[0], price: gamma.outcomePrices[0] || 0.5 },
+      { tokenId: '', outcome: outcomes[1], price: gamma.outcomePrices[1] || 0.5 },
     ];
 
     return {

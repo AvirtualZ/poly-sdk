@@ -80,6 +80,7 @@ export type {
 export { WalletService } from './services/wallet-service.js';
 export type {
   WalletProfile,
+  WalletActivityOptions,
   WalletActivitySummary,
   SellActivityResult,
   // Time-based leaderboard types
@@ -156,6 +157,12 @@ export type {
   AutoCopyTradingStats,
   AutoCopyTradingSubscription,
   SmartMoneyServiceConfig,
+  // Leaderboard & Report types
+  LeaderboardOptions,
+  SmartMoneyLeaderboardEntry,
+  PeriodRanking,
+  WalletReport,
+  WalletComparison,
 } from './services/smart-money-service.js';
 
 // TradingService - Unified trading and market data

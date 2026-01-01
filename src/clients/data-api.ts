@@ -56,7 +56,7 @@ export interface Position {
 
 export interface Activity {
   // Transaction type
-  type: 'TRADE' | 'SPLIT' | 'MERGE' | 'REDEEM' | 'CONVERSION';
+  type: 'TRADE' | 'SPLIT' | 'MERGE' | 'REDEEM' | 'REWARD' | 'CONVERSION';
   side: 'BUY' | 'SELL';
 
   // Trade data
@@ -523,15 +523,24 @@ export class DataApiClient {
   /**
    * Get all activity for a wallet (auto-pagination)
    *
+   * **⚠️ IMPORTANT: API Limitation**
+   * The Polymarket API has a hard offset limit of 10,000. This means:
+   * - Maximum ~10,500 records can be retrieved via offset pagination
+   * - For active traders, this may only cover a few hours of history
+   * - Use `start` and `end` params for time-based filtering to access older data
+   *
    * @param address - Wallet address
-   * @param params - Query parameters
-   * @param maxItems - Maximum items to fetch (default: 10000)
+   * @param params - Query parameters (use `start`/`end` for time filtering)
+   * @param maxItems - Maximum items to fetch (default: 10000, capped by API offset limit)
    *
    * @example
    * ```typescript
-   * // Get all activity since a specific date
-   * const startDate = Math.floor(new Date('2024-12-01').getTime() / 1000);
-   * const allActivity = await client.getAllActivity(address, { start: startDate });
+   * // Get all recent activity (limited by API offset)
+   * const allActivity = await client.getAllActivity(address);
+   *
+   * // Get activity for a specific time window (recommended for complete history)
+   * const oneWeekAgo = Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60;
+   * const weekActivity = await client.getAllActivity(address, { start: oneWeekAgo });
    * ```
    */
   async getAllActivity(
@@ -541,13 +550,22 @@ export class DataApiClient {
   ): Promise<Activity[]> {
     const all: Activity[] = [];
     const limit = 500; // Max allowed by API
+    const API_OFFSET_LIMIT = 10000; // Hard limit from Polymarket API
     let offset = 0;
 
-    while (all.length < maxItems) {
+    while (all.length < maxItems && offset < API_OFFSET_LIMIT) {
       const page = await this.getActivity(address, { ...params, limit, offset });
       all.push(...page);
       if (page.length < limit) break; // No more data
       offset += limit;
+    }
+
+    // Warn if we hit the API offset limit
+    if (offset >= API_OFFSET_LIMIT && all.length >= API_OFFSET_LIMIT) {
+      console.warn(
+        `[DataApiClient] Hit API offset limit (${API_OFFSET_LIMIT}). ` +
+          'Use time filtering (start/end params) to access older activity data.'
+      );
     }
 
     return all.slice(0, maxItems);
@@ -791,12 +809,9 @@ export class DataApiClient {
         asset: String(p.asset || ''),
         conditionId: String(p.conditionId || ''),
         outcome: String(p.outcome || ''),
-        outcomeIndex:
-          typeof p.outcomeIndex === 'number'
-            ? p.outcomeIndex
-            : p.outcome === 'Yes'
-              ? 0
-              : 1,
+        // Only use outcomeIndex if provided by API - don't infer from outcome name
+        // (non-binary markets have arbitrary outcome names)
+        outcomeIndex: typeof p.outcomeIndex === 'number' ? p.outcomeIndex : 0,
 
         // Position data
         size: Number(p.size),
@@ -859,12 +874,8 @@ export class DataApiClient {
         icon: p.icon !== undefined ? String(p.icon) : undefined,
         eventSlug: p.eventSlug !== undefined ? String(p.eventSlug) : undefined,
         outcome: String(p.outcome || ''),
-        outcomeIndex:
-          typeof p.outcomeIndex === 'number'
-            ? p.outcomeIndex
-            : p.outcome === 'Yes'
-              ? 0
-              : 1,
+        // Only use outcomeIndex if provided by API - don't infer from outcome name
+        outcomeIndex: typeof p.outcomeIndex === 'number' ? p.outcomeIndex : 0,
         oppositeOutcome: p.oppositeOutcome !== undefined ? String(p.oppositeOutcome) : undefined,
         oppositeAsset: p.oppositeAsset !== undefined ? String(p.oppositeAsset) : undefined,
         endDate: p.endDate !== undefined ? String(p.endDate) : undefined,
@@ -925,12 +936,8 @@ export class DataApiClient {
         price: Number(t.price),
         size: Number(t.size),
         outcome: String(t.outcome || ''),
-        outcomeIndex:
-          typeof t.outcomeIndex === 'number'
-            ? t.outcomeIndex
-            : t.outcome === 'Yes'
-              ? 0
-              : 1,
+        // Only use outcomeIndex if provided by API - don't infer from outcome name
+        outcomeIndex: typeof t.outcomeIndex === 'number' ? t.outcomeIndex : 0,
 
         // Transaction info
         timestamp: this.normalizeTimestamp(t.timestamp),

@@ -448,6 +448,56 @@ export interface UnifiedMarket {
   source: 'gamma' | 'clob' | 'merged';
 }
 
+// ===== Binary Token Helpers =====
+
+/**
+ * Binary tokens for a market (primary/secondary instead of Yes/No)
+ *
+ * Polymarket supports various outcome names:
+ * - Yes/No (standard binary markets)
+ * - Up/Down (BTC price predictions)
+ * - Team1/Team2 (sports matches)
+ * - Heads/Tails (coin flips)
+ *
+ * Using index-based access (tokens[0], tokens[1]) is more reliable
+ * than name-based access (outcome === 'Yes').
+ */
+export interface BinaryTokens {
+  /** First outcome token (Yes/Up/Team1...) - corresponds to tokens[0] */
+  primary: MarketToken;
+  /** Second outcome token (No/Down/Team2...) - corresponds to tokens[1] */
+  secondary: MarketToken;
+  /** Outcome names [primary, secondary] for display purposes */
+  outcomes: [string, string];
+}
+
+/**
+ * Get binary tokens from a market's token array
+ *
+ * Uses index-based access which is stable across all outcome names.
+ *
+ * @param tokens - Market tokens array
+ * @returns BinaryTokens or null if not a binary market
+ *
+ * @example
+ * ```typescript
+ * const market = await sdk.markets.getMarket('0x...');
+ * const binary = getBinaryTokens(market.tokens);
+ * if (binary) {
+ *   console.log(`${binary.outcomes[0]} price: ${binary.primary.price}`);
+ *   console.log(`${binary.outcomes[1]} price: ${binary.secondary.price}`);
+ * }
+ * ```
+ */
+export function getBinaryTokens(tokens: MarketToken[]): BinaryTokens | null {
+  if (!tokens || tokens.length < 2) return null;
+  return {
+    primary: tokens[0],
+    secondary: tokens[1],
+    outcomes: [tokens[0].outcome, tokens[1].outcome],
+  };
+}
+
 // Helper to convert interval to milliseconds
 export function getIntervalMs(interval: KLineInterval): number {
   const map: Record<KLineInterval, number> = {
