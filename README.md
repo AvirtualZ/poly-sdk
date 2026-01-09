@@ -1,13 +1,13 @@
-# Poly-SDK 使用指南
+# 使用指南
 
-> **Polymarket TypeScript SDK** - 预测市场交易、聪明钱分析和市场数据的完整解决方案
+> **Polymarket TypeScript SDK** - 预测市场交易、聪明钱分析和市场数据的完整解决方案。 ➡️[关于poly-sdk](./poly-sdk.zh-CN.md)
 
 [![npm version](https://img.shields.io/npm/v/@catalyst-team/poly-sdk.svg)](https://www.npmjs.com/package/@catalyst-team/poly-sdk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## 📖 关于本项目
 
-`@catalyst-team/poly-sdk` 是一个功能完整的 TypeScript SDK，为 Polymarket 预测市场提供：
+`poly-sdk` 是一个功能完整的 TypeScript SDK，为 Polymarket 预测市场提供：
 
 - 🎯 **交易功能** - 限价单/市价单（GTC, GTD, FOK, FAK）、订单管理、奖励追踪
 - 📊 **市场数据** - 实时价格、订单簿、K线、历史成交、市场搜索
