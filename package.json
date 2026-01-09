@@ -36,7 +36,8 @@
     "list": "tsx list-commands.ts",
     "list:examples": "tsx list-commands.ts examples",
     "list:scripts": "tsx list-commands.ts scripts",
-    "list:quick": "tsx list-commands.ts quick"
+    "list:quick": "tsx list-commands.ts quick",
+    "cli": "tsx cli.ts"
   },
   "keywords": [
     "polymarket",

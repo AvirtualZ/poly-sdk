@@ -9,22 +9,22 @@
  * - Metrics collection
  * - Result persistence
  * - Graceful shutdown
- * 
+ *
  * Real-time monitoring of trending Polymarket markets for arbitrage opportunities.
- * 
+ *
  * IMPORTANT: Understanding Polymarket Orderbook
  * =============================================
  * Polymarket 订单簿的关键特性：买 YES @ P = 卖 NO @ (1-P)
  * 因此同一订单会在两个订单簿中出现
- * 
+ *
  * 正确的套利计算必须使用"有效价格"：
  * - effectiveBuyYes = min(YES.ask, 1 - NO.bid)
  * - effectiveBuyNo = min(NO.ask, 1 - YES.bid)
  * - effectiveSellYes = max(YES.bid, 1 - NO.ask)
  * - effectiveSellNo = max(NO.bid, 1 - YES.ask)
- * 
+ *
  * 详细文档见: docs/01-polymarket-orderbook-arbitrage.md
- * 
+ *
  * Environment variables:
  *   SCAN_INTERVAL_MS - Scan interval in ms (default: 5000)
  *   MIN_PROFIT_THRESHOLD - Minimum profit % (default: 0.1%)
@@ -221,9 +221,9 @@ async function runScanCycle(sdk: PolymarketSDK): Promise<void> {
           market: result.market.question,
           conditionId: result.market.conditionId,
           profit: `${(Math.max(result.longArbProfit, result.shortArbProfit) * 100).toFixed(3)}%`,
-          effectiveLongCost: result.effectiveLongCost.toFixed(4),
-          effectiveShortRevenue: result.effectiveShortRevenue.toFixed(4),
-        });
+        effectiveLongCost: result.effectiveLongCost.toFixed(4),
+        effectiveShortRevenue: result.effectiveShortRevenue.toFixed(4),
+      });
       }
     } else {
       errorCount++;
@@ -234,7 +234,7 @@ async function runScanCycle(sdk: PolymarketSDK): Promise<void> {
   if (opportunities.length > 0) {
     opportunitiesFound += opportunities.length;
     metrics.increment('opportunities_detected', { count: opportunities.length.toString() });
-  }
+      }
 
   const cycleTime = Date.now() - cycleStart;
   logger.info(`Cycle #${scanCount} complete`, {
@@ -292,9 +292,9 @@ function saveResults(): void {
 async function main(): Promise<void> {
   logger.info('Starting Production Arbitrage Monitor', {
     config: {
-      scanInterval: `${CONFIG.scanIntervalMs}ms`,
-      minProfitThreshold: `${CONFIG.minProfitThreshold * 100}%`,
-      maxMarkets: CONFIG.maxMarkets,
+    scanInterval: `${CONFIG.scanIntervalMs}ms`,
+    minProfitThreshold: `${CONFIG.minProfitThreshold * 100}%`,
+    maxMarkets: CONFIG.maxMarkets,
       maxCycles: CONFIG.maxCycles || 'unlimited',
     },
   });

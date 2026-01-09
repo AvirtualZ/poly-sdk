@@ -9,13 +9,13 @@
  * - Trade limits and safety checks
  * - Metrics collection
  * - Graceful shutdown
- * 
+ *
  * Demonstrates the full arbitrage workflow:
  * 1. Scan markets for opportunities
  * 2. Start real-time monitoring
  * 3. Auto-execute arbitrage
  * 4. Stop and clear positions
- * 
+ *
  * Environment variables:
  *   POLYMARKET_PRIVATE_KEY - Private key for trading
  *   POLYGON_RPC_URL - RPC URL (optional)
@@ -98,21 +98,21 @@ async function initialize(): Promise<void> {
       minTradeSize: config.minTradeSize,
       maxTradeSize: config.maxTradeSize,
       autoExecute: config.enableTrading,
-      enableLogging: true,
+    enableLogging: true,
 
-      // Rebalancer config
+    // Rebalancer config
       enableRebalancer: config.enableTrading,
-      minUsdcRatio: 0.2,
-      maxUsdcRatio: 0.8,
-      targetUsdcRatio: 0.5,
-      imbalanceThreshold: 5,
-      rebalanceInterval: 10000,
-      rebalanceCooldown: 30000,
+    minUsdcRatio: 0.2,
+    maxUsdcRatio: 0.8,
+    targetUsdcRatio: 0.5,
+    imbalanceThreshold: 5,
+    rebalanceInterval: 10000,
+    rebalanceCooldown: 30000,
 
-      // Execution safety
-      sizeSafetyFactor: 0.8,
-      autoFixImbalance: true,
-    });
+    // Execution safety
+    sizeSafetyFactor: 0.8,
+    autoFixImbalance: true,
+  });
 
     // Set up event listeners with enhanced logging
     setupEventListeners();

@@ -24,7 +24,7 @@ async function main() {
   console.log('   Top 10 traders:\n');
 
   for (const entry of leaderboard.entries.slice(0, 10)) {
-    console.log(`   #${entry.rank} ${entry.address.slice(0, 8)}...${entry.address.slice(-6)}`);
+    console.log(`   #${entry.rank} ${entry.address}`);
     console.log(`       PnL: $${entry.pnl.toLocaleString()}`);
     console.log(`       Volume: $${entry.volume.toLocaleString()}`);
     console.log(`       Positions: ${entry.positions}, Trades: ${entry.trades}`);
@@ -33,7 +33,7 @@ async function main() {
   // 2. Get wallet positions for top trader
   if (leaderboard.entries.length > 0) {
     const topTrader = leaderboard.entries[0].address;
-    console.log(`\n2. Getting positions for top trader: ${topTrader.slice(0, 8)}...`);
+    console.log(`\n2. Getting positions for top trader: ${topTrader}`);
 
     const positions = await sdk.dataApi.getPositions(topTrader);
     console.log(`   Found ${positions.length} positions:\n`);
@@ -86,7 +86,7 @@ async function main() {
 
   console.log('   Most active wallets in recent trades:\n');
   for (const [wallet, count] of sortedWallets) {
-    console.log(`   - ${wallet.slice(0, 8)}...${wallet.slice(-6)}: ${count} trades`);
+    console.log(`   - ${wallet}: ${count} trades`);
   }
 
   console.log('\n=== Done ===');
