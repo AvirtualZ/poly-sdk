@@ -160,17 +160,10 @@ pnpm run build
 ---
 
 ### 4️⃣配置环境变量
-
-将 `.env.example` 文件重命名为 `.env`，并添加以下内容：
-
-```env
-POLYMARKET_PRIVATE_KEY=0x你的私钥
-
-# 可选：套利扫描配置
-SCAN_INTERVAL_MS=5000
-PROFIT_THRESHOLD=0.005
+```bash
+# 将 `.env.example` 文件重命名为 `.env`，并补充相应的环境变量
+mv .env.example .env && nano .env #编辑完成按 Ctrl+O 保存，Ctrl+X 退出
 ```
-
 ---
 
 ## ❇️ 使用方法
