@@ -8,6 +8,10 @@
 
 import 'dotenv/config';
 import { PolymarketSDK } from '../../src/index.js';
+import { config } from 'dotenv';
+import path from 'path';
+config({ path: path.resolve(process.cwd(), '.env') });
+const PRIVATE_KEY = process.env.POLYMARKET_PRIVATE_KEY || process.env.POLY_PRIVKEY || '';
 
 // ⚠️ 真实交易配置
 const DRY_RUN = false;  // 真实交易！
@@ -25,7 +29,7 @@ async function main() {
   console.log(`Duration: ${RUN_DURATION_MS / 1000}s`);
   console.log('='.repeat(60));
 
-  const privateKey = process.env.POLYMARKET_PRIVATE_KEY || process.env.PRIVATE_KEY || process.env.POLY_PRIVATE_KEY;
+  const privateKey = PRIVATE_KEY;
   if (!privateKey) {
     console.error('❌ POLYMARKET_PRIVATE_KEY not found');
     process.exit(1);

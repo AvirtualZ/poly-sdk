@@ -9,9 +9,13 @@
  * 运行：pnpm exec tsx scripts/smart-money/05-auto-copy-simple.ts
  */
 
-import 'dotenv/config';
+
 import { PolymarketSDK } from '../../src/index.js';
 
+import { config } from 'dotenv';
+import path from 'path';
+config({ path: path.resolve(process.cwd(), '.env') });
+const PRIVATE_KEY = process.env.POLYMARKET_PRIVATE_KEY || process.env.POLY_PRIVKEY || '';
 const DRY_RUN = true;
 const TOP_N = 50;
 const RUN_DURATION_MS = 60 * 1000;
@@ -21,7 +25,7 @@ async function main() {
   console.log('🤖 Auto Copy Trading - Simplified API');
   console.log('='.repeat(60));
 
-  const privateKey = process.env.POLYMARKET_PRIVATE_KEY || process.env.PRIVATE_KEY || process.env.POLY_PRIVATE_KEY;
+  const privateKey = PRIVATE_KEY;
   if (!privateKey) {
     console.error('❌ POLYMARKET_PRIVATE_KEY not found');
     process.exit(1);

@@ -11,7 +11,7 @@
 import { config } from 'dotenv';
 import path from 'path';
 import { ethers } from 'ethers';
-import { AuthorizationService } from '../src/index.js';
+import { AuthorizationService } from '../../src/index.js';
 
 // Load .env from package root
 config({ path: path.resolve(process.cwd(), '.env') });

@@ -9,7 +9,7 @@
  * 运行：pnpm exec tsx scripts/smart-money/04-auto-copy-trading.ts
  */
 
-import 'dotenv/config';
+
 import {
   SmartMoneyService,
   WalletService,
@@ -20,9 +20,14 @@ import {
   RateLimiter,
   createUnifiedCache,
 } from '../../src/index.js';
+import { config } from 'dotenv';
+import path from 'path';
 
+// Load .env from package root
+config({ path: path.resolve(process.cwd(), '.env') });
+const PRIVATE_KEY = process.env.POLYMARKET_PRIVATE_KEY || process.env.POLY_PRIVKEY || '';
 // Configuration
-const DRY_RUN = true; // Set to false to execute real trades
+const DRY_RUN = false; // Set to false to execute real trades
 const TOP_N = 50; // Follow top 50 traders (more chances to catch trades)
 const SIZE_SCALE = 0.1; // Copy 10% of their trade size
 const MAX_SIZE_PER_TRADE = 10; // Max $10 per trade
@@ -41,7 +46,7 @@ async function main() {
   console.log('='.repeat(60));
 
   // Check for private key
-  const privateKey = process.env.PRIVATE_KEY || process.env.POLY_PRIVATE_KEY;
+  const privateKey = PRIVATE_KEY
   if (!privateKey) {
     console.error('❌ PRIVATE_KEY or POLY_PRIVATE_KEY not found in .env');
     process.exit(1);
